@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import Formulario from './components/Formilario';
+import Formulario from './components/Formulario';
 import ListaEventos from './components/ListaEventos';
 
-Function App() {
+function App() {
   const [eventos, setEventos] = useState ([]);
 
   useEffect (() => {
@@ -10,20 +10,19 @@ Function App() {
     if (datos) {
       setEventos(JSON.parse(datos));
     }
-  })
-}, []);
+  }, []);
 
-useEffect(() => {
-  localStorage.setItem('eventos',JSON.stringify(eventos));
-}, [eventos]);
+  useEffect(() => {
+    localStorage.setItem('eventos',JSON.stringify(eventos));
+  }, [eventos]);
 
-return (
-  <div class name="App">
-    <h1>Gestion de eventos comunitarios</h1>
-    <Formulario eventos={eventos} setEventos={setEventos} />
-    <ListaEventos eventos={eventos} setEventos={setEventos} />
+  return (
+    <div class name="App">
+     <h1>Gestion de eventos comunitarios</h1>
+     <Formulario eventos={eventos} setEventos={setEventos} />
+     <ListaEventos eventos={eventos} setEventos={setEventos} />
   </div>
-);
+  );
 }
 
 

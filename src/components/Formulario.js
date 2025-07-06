@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-function Formilario({ eventos, setEventos}) {
-    const [event, setEvento] = useState({
+function Formulario({ eventos, setEventos}) {
+    const [evento, setEvento] = useState({
         nombre: '',
         asistentes: '',
         tipo: '',
@@ -14,22 +14,24 @@ function Formilario({ eventos, setEventos}) {
 
     const handleChange = (e) => {
         setEvento({
-          ...eventos,
+          ...evento,
           [e.target.name]: e.target.value  
         });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!eventos.nombre || !eventos.tipo || !eventos.fecha) return alert('Completa todos los campos obligatorios');
+        if (!evento.nombre || !evento.tipo || !evento.fecha) {
+            return alert('Completa todos los campos obligatorios');
+        }
 
         if (modoEdicion) {
-            const nuevosEventos = eventos.map((ev, index)) =>
+            const nuevosEventos = eventos.map((ev, index) =>
                 index === idEdicion ? evento : ev
-        );
-        setEventos(nuevosEventos);
-        setModoEdicion(false);
-        setIdEdicion(null);
+            );
+            setEventos(nuevosEventos);
+            setModoEdicion(false);
+            setIdEdicion(null);
         } else {
             setEventos([...eventos, evento]);
         }
@@ -43,6 +45,17 @@ function Formilario({ eventos, setEventos}) {
         });
     };
 
+    useEffect(() => {
+        const handleEditar = (e) => {
+            const index = e.detail.index;
+            setModoEdicion(true);
+            setIdEdicion(index);
+        };
+
+        window.addEventListener('editarEvento', handleEditar);
+        return () => window.removeEventListener('editarEvento', handleEditar);
+    }, []);
+
 
     useEffect(() => {
         if (modoEdicion && idEdicion !== null) {
@@ -54,16 +67,23 @@ function Formilario({ eventos, setEventos}) {
         <form onSubmit={handleSubmit}>
             <h2>{modoEdicion ? 'Editar Evento' : 'Registrar Evento'}</h2>
 
-            <input type="text" name="nombre" placeholder="Nombre del evento" value={evento.nombre} onChange={handleCange} required />
+            <input type="text" name="nombre" placeholder="Nombre del evento" value={evento.nombre} onChange={handleChange} required />
             <input type="number"name="asistentes" placeholder="N° Asistentes" value={evento.asistentes} onChange={handleChange} />
 
-            <select name="tipe" value={evento.tipo} onChange={handleChange} required>
+            <select name="tipo" value={evento.tipo} onChange={handleChange} required>
                 <option value="">Seleccione tipo</option>
                 <option value="Reunion">Runion</option>
                 <option value="Charla">Charla</option>
                 <option value="Actividad social">Actividad social</option>
             </select>
 
-        </form>
-    )
+            <textarea name="descripcion" placeholder="Descripcion" value={evento.descripcion} onChange={handleChange}></textarea>
+
+            <input type="date" name="fecha" value={evento.fecha} onChange={handleChange} required />
+
+            <button type="submit">{modoEdicion ? 'Actualizar' : 'Agregar'}</button>
+         </form>
+    );
 }
+
+export default Formulario;
